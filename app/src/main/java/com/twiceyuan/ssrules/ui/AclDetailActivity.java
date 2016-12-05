@@ -28,11 +28,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
-import java.util.Arrays;
 import java.util.List;
 
 import rx.Observable;
-import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
@@ -125,7 +123,7 @@ public class AclDetailActivity extends BaseActivity implements CanBack {
     }
 
     public void loadFileContent() {
-        readFile(file.filePath)
+        Utils.readFile(file.filePath)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(s -> {
@@ -137,16 +135,6 @@ public class AclDetailActivity extends BaseActivity implements CanBack {
                             .filter(line -> line.startsWith("["))
                             .toList().toBlocking().first();
                 });
-    }
-
-    private Observable<List<String>> readFile(final String filePath) {
-        return Observable.create(new Observable.OnSubscribe<List<String>>() {
-            @Override
-            public void call(Subscriber<? super List<String>> subscriber) {
-                String[] split = RootManager.getInstance().runCommand("cat " + filePath).getMessage().split("\n");
-                subscriber.onNext(Arrays.asList(split));
-            }
-        });
     }
 
     @Override
@@ -184,7 +172,7 @@ public class AclDetailActivity extends BaseActivity implements CanBack {
             manager.runCommand("chmod a+r " + file.filePath);
             manager.remount(Path.SS_PATH, "r");
         }
-        Utils.toast("保存完成，需要重新开启 Shadowsocks");
+        Utils.toast("保存完成");
         Utils.restartShadowsocks();
     }
 }

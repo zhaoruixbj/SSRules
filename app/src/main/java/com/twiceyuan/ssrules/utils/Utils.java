@@ -16,7 +16,11 @@ import java.io.InputStreamReader;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+
+import rx.Observable;
+import rx.Subscriber;
 
 /**
  * Created by twiceYuan on 02/12/2016.
@@ -100,6 +104,16 @@ public class Utils {
             }
         }
         return null;
+    }
+
+    public static Observable<List<String>> readFile(final String filePath) {
+        return Observable.create(new Observable.OnSubscribe<List<String>>() {
+            @Override
+            public void call(Subscriber<? super List<String>> subscriber) {
+                String[] split = RootManager.getInstance().runCommand("cat " + filePath).getMessage().split("\n");
+                subscriber.onNext(Arrays.asList(split));
+            }
+        });
     }
 
     public static int getPx(float dpValue) {
