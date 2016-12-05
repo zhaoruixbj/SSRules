@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:padding="12dp"
+              android:background="@color/white"
+              android:layout_height="wrap_content">
+
+    <TextView
+        android:id="@+id/tv_name"
+        tools:text="跳过国内及局域网地址"
+        android:textSize="16sp"
+        android:textColor="@color/text_dark"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="4dp"/>
+
+    <TextView
+        android:id="@+id/tv_path"
+        android:textSize="@dimen/text_small"
+        android:textColor="@color/text_light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="4dp"/>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:weightSum="1"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:id="@+id/tv_last_update"
+            tools:text="2016-12-2 12:22:00"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:textSize="@dimen/text_small"
+            android:textColor="@color/text_light"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/tv_file_size"
+            tools:text="23 KiB"
+            android:textSize="@dimen/text_small"
+            android:textColor="@color/text_light"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+    </LinearLayout>
+
+</LinearLayout>
