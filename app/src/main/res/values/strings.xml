@@ -4,4 +4,6 @@
     <string name="not_installed">没有检查到安装的 Shadowsocks</string>
     <string name="need_root">本程序需要 Root 权限</string>
     <string name="title_acl_detail">规则详情</string>
+    <string name="rule_content">规则内容</string>
+    <string name="rule_host">规则域名（如：google.com）</string>
 </resources>

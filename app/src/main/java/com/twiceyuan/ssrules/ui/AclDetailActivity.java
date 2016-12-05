@@ -8,7 +8,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.widget.Toast;
+import android.text.TextUtils;
 
 import com.chrisplus.rootmanager.RootManager;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
@@ -50,6 +50,7 @@ public class AclDetailActivity extends BaseActivity implements CanBack {
     FloatingActionButton fab;
 
     AclFile file;
+    List<String> typeList;
 
     SectionAdapter<String, AclLineHolder> mAdapter;
 
@@ -89,6 +90,9 @@ public class AclDetailActivity extends BaseActivity implements CanBack {
             @Override
             public String getSectionTitle(int position) {
                 String item = mAdapter.getItem(position);
+                if (TextUtils.isEmpty(item)) {
+                    return "";
+                }
                 return String.valueOf(item.replace("(.*\\.)?", "").charAt(0));
             }
         });
@@ -104,12 +108,20 @@ public class AclDetailActivity extends BaseActivity implements CanBack {
                 mAdapter.remove(aclItem.content);
                 mAdapter.notifyDataSetChanged();
             }, () -> {
-
+                Utils.toast("没实现！");
+                // Dialogs.editAcl(aclItem);
             });
         });
 
         scroller.setRecyclerView(rv_detail);
-        fab.setOnClickListener(view -> Toast.makeText(this, "没实现！", Toast.LENGTH_SHORT).show());
+
+        fab.setOnClickListener(view -> Dialogs.editAcl(this, null, typeList, (item, type) -> {
+            int position = mAdapter.getData().indexOf(type) + 1;
+            mAdapter.getData().add(position, item.content);
+            mAdapter.notifyDataSetChanged();
+
+            isChanged = true;
+        }));
     }
 
     public void loadFileContent() {
@@ -120,6 +132,10 @@ public class AclDetailActivity extends BaseActivity implements CanBack {
                     mAdapter.clear();
                     mAdapter.addAll(s);
                     mAdapter.notifyDataSetChanged();
+
+                    typeList = Observable.from(s)
+                            .filter(line -> line.startsWith("["))
+                            .toList().toBlocking().first();
                 });
     }
 

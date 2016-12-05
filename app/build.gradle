@@ -35,7 +35,7 @@ dependencies {
     compile 'com.android.support:appcompat-v7:25.0.1'
     testCompile 'junit:junit:4.12'
     compile 'com.chrisplus.rootmanager:library:2.0.5@aar'
-    compile 'com.github.twiceyuan:AutoFinder:0.1'
+    compile 'com.github.twiceyuan:AutoFinder:0.2.1'
     compile 'com.android.support:recyclerview-v7:25.0.1'
     compile('com.github.twiceyuan:CommonAdapter:0.5.3') {
         exclude group: 'com.android.support', module: 'recyclerview-v7'
@@ -43,6 +43,7 @@ dependencies {
     compile 'io.reactivex:rxandroid:1.2.1'
     compile 'com.futuremind.recyclerfastscroll:fastscroll:0.2.4'
     compile 'com.android.support:design:25.0.1'
+    compile 'com.rengwuxian.materialedittext:library:2.1.4'
 }
 
 apply plugin: 'me.tatarka.retrolambda'
