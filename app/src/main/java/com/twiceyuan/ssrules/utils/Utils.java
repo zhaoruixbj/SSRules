@@ -115,4 +115,8 @@ public class Utils {
     public static void toast(String message) {
         Toast.makeText(App.get(), message, Toast.LENGTH_SHORT).show();
     }
+
+    public static void restartShadowsocks() {
+        RootManager.getInstance().runCommand("kill -9 $(pidof ss-local)");
+    }
 }
