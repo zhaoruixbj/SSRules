@@ -166,11 +166,9 @@ public class AclDetailActivity extends BaseActivity implements CanBack {
         RootManager manager = RootManager.getInstance();
 
         if (manager.remount(Path.SS_PATH, "rw")) {
-            manager.runCommand("setenforce 0");
             manager.runCommand("cat " + file.filePath + " > " + file.filePath + ".bak");
             manager.runCommand("cat " + tempFile.getAbsolutePath() + " > " + file.filePath);
-            manager.runCommand("chmod a+r " + file.filePath);
-            manager.remount(Path.SS_PATH, "r");
+            manager.runCommand("chmod a-w " + file.filePath);
         }
         Utils.toast("保存完成");
         Utils.restartShadowsocks();

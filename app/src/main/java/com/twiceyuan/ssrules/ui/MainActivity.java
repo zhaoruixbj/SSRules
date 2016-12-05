@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
             } else {
                 AclListActivity.start(this);
                 //
-                rootManager.runCommand("adb shell su root setenforce 0");
+                // rootManager.runCommand("adb shell su root setenforce 0");
                 finish();
             }
         } else {
