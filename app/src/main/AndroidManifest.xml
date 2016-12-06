@@ -25,6 +25,7 @@
         <activity
             android:name=".ui.ShareReceiveActivity"
             android:label="添加 SS 规则"
+            android:excludeFromRecents="true"
             android:launchMode="singleInstance">
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
