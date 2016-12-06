@@ -21,8 +21,32 @@
         android:hint="@string/rule_content"
         app:met_floatingLabel="normal"/>
 
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="12dp"/>
+
+    <TextView
+        android:text="@string/add_to"
+        android:textSize="12sp"
+        android:padding="6dp"
+        android:textColor="@color/text_light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <android.support.v7.widget.AppCompatSpinner
         android:id="@+id/sp_file"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="12dp"/>
+
+    <TextView
+        android:text="@string/choose_type"
+        android:textSize="12sp"
+        android:padding="6dp"
+        android:textColor="@color/text_light"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

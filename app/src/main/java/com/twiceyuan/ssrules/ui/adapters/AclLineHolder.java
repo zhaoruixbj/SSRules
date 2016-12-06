@@ -9,6 +9,7 @@ import com.twiceyuan.commonadapter.library.LayoutId;
 import com.twiceyuan.commonadapter.library.ViewId;
 import com.twiceyuan.commonadapter.library.holder.CommonHolder;
 import com.twiceyuan.ssrules.R;
+import com.twiceyuan.ssrules.constants.Filters;
 
 /**
  * Created by twiceYuan on 04/12/2016.
@@ -28,9 +29,8 @@ public class AclLineHolder extends CommonHolder<String> {
         tvLine.setTypeface(null, Typeface.NORMAL);
         tvLine.setTextColor(ContextCompat.getColor(context, R.color.text_normal));
 
-        if (s.startsWith("[")) {
-            tvLine.setTypeface(null, Typeface.BOLD);
-            tvLine.setTextColor(ContextCompat.getColor(context, R.color.text_dark));
+        if (matchHeader(context, s)) {
+            return;
         }
 
         if (s.startsWith("#")) {
@@ -38,5 +38,22 @@ public class AclLineHolder extends CommonHolder<String> {
         }
 
         tvLine.setText(s);
+    }
+
+    private boolean matchHeader(Context context, String s) {
+        if (!s.startsWith("[")) {
+            return false;
+        }
+        tvLine.setTypeface(null, Typeface.BOLD);
+        tvLine.setTextColor(ContextCompat.getColor(context, R.color.text_dark));
+
+        if (Filters.MODE.keySet().contains(s)) {
+            tvLine.setText(Filters.MODE.get(s));
+        } else if (Filters.TYPE.keySet().contains(s)) {
+            tvLine.setText(Filters.TYPE.get(s));
+        } else {
+            tvLine.setText(s);
+        }
+        return true;
     }
 }

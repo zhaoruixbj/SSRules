@@ -27,13 +27,15 @@ import java.util.List;
  * Created by twiceYuan on 02/12/2016.
  * Email: i@twiceyuan.com
  * Site: http://twiceyuan.com
+ *
+ * ACL 规则列表页面
  */
 public class AclListActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     private static final int MENU_PREFERENCES = 1;
 
     SwipeRefreshLayout refreshLayout;
-    RecyclerView       rv_acls;
+    RecyclerView       rv_acl_list;
 
     private CommonAdapter<AclFile, AclFileHolder> mAdapter;
 
@@ -49,9 +51,9 @@ public class AclListActivity extends AppCompatActivity implements SwipeRefreshLa
 
         AutoFinder.find(this);
 
-        rv_acls.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        rv_acls.addItemDecoration(new VerticalItemDecoration(Utils.getPx(4)));
-        rv_acls.setAdapter(mAdapter = new CommonAdapter<>(this, AclFileHolder.class));
+        rv_acl_list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        rv_acl_list.addItemDecoration(new VerticalItemDecoration(Utils.getPx(4)));
+        rv_acl_list.setAdapter(mAdapter = new CommonAdapter<>(this, AclFileHolder.class));
 
         mAdapter.setOnItemClickListener((position, file) -> AclDetailActivity.start(AclListActivity.this, file));
 
@@ -78,7 +80,7 @@ public class AclListActivity extends AppCompatActivity implements SwipeRefreshLa
 
         menu.add(Menu.FIRST, MENU_PREFERENCES, 100, "偏好")
                 .setIcon(R.drawable.ic_settings_white_24dp)
-                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
         return true;
     }

@@ -17,14 +17,16 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.twiceyuan.autofinder.AutoFinder;
 import com.twiceyuan.ssrules.R;
 import com.twiceyuan.ssrules.constants.Filters;
+import com.twiceyuan.ssrules.helper.Preferences;
 import com.twiceyuan.ssrules.model.AclFile;
+import com.twiceyuan.ssrules.model.AclType;
 import com.twiceyuan.ssrules.ui.constract.CanBack;
 import com.twiceyuan.ssrules.utils.Utils;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import rx.Observable;
+import rx.functions.Func1;
 
 /**
  * Created by twiceYuan on 05/12/2016.
@@ -37,9 +39,13 @@ public class ShareReceiveActivity extends BaseActivity implements CanBack {
 
     private static final int MENU_SUBMIT = 1;
 
+    // 规则 domain host
     MaterialEditText et_host;
+    // 规则内容（生成）
     MaterialEditText et_rule;
+    // 文件下拉菜单
     AppCompatSpinner sp_file;
+    // 类型下拉菜单
     AppCompatSpinner sp_type;
 
     @Override
@@ -88,23 +94,31 @@ public class ShareReceiveActivity extends BaseActivity implements CanBack {
 
         List<AclFile> files = Utils.getAllAclFiles();
 
-        List<String> fileNames = Observable.from(files)
-                .map(file -> file.fileName)
-                .toList().toBlocking().first();
-
-        sp_file.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, fileNames));
+        sp_file.setAdapter(new ArrayAdapter<>(this, R.layout.support_simple_spinner_dropdown_item, files));
         sp_file.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
                 Utils.readFile(files.get(position).filePath).subscribe(strings -> {
-                    List<String> typeList = new ArrayList<>();
+                    List<AclType> typeList = new ArrayList<>();
                     for (int i = 0; i < strings.size(); i++) {
-                        if (strings.get(i).startsWith("[")) {
-                            typeList.add(strings.get(i));
+                        String line = strings.get(i);
+                        if (line.startsWith("[") && Filters.TYPE.keySet().contains(line)) {
+                            AclType type = new AclType();
+                            type.content = line;
+                            type.name = Filters.TYPE.get(line);
+                            typeList.add(type);
                         }
                     }
                     sp_type.setAdapter(new ArrayAdapter<>(ShareReceiveActivity.this, R.layout.support_simple_spinner_dropdown_item, typeList));
                     sp_type.setVisibility(View.VISIBLE);
+
+                    String lastType = Preferences.getSetting(Preferences.Key.LAST_TYPE, "");
+                    Utils.setDefaultOrFirst(sp_type, lastType, new Func1<AclType, String>() {
+                        @Override
+                        public String call(AclType aclType) {
+                            return aclType.content;
+                        }
+                    });
                 });
             }
 
@@ -113,7 +127,14 @@ public class ShareReceiveActivity extends BaseActivity implements CanBack {
 
             }
         });
-        sp_file.setSelection(0);
+
+        String lastFilePath = Preferences.getSetting(Preferences.Key.LAST_FILE, "");
+        Utils.setDefaultOrFirst(sp_file, lastFilePath, new Func1<AclFile, String>() {
+            @Override
+            public String call(AclFile file) {
+                return file.filePath;
+            }
+        });
     }
 
     void handleSendText(Intent intent) {
@@ -144,6 +165,17 @@ public class ShareReceiveActivity extends BaseActivity implements CanBack {
                 return true;
             }
 
+            AclFile selectedFile = (AclFile) sp_file.getSelectedItem();
+            AclType selectedType = (AclType) sp_type.getSelectedItem();
+
+            Utils.insertAcl(this,
+                    et_rule.getText().toString(),
+                    selectedFile.filePath,
+                    selectedType.content
+            ).subscribe(aVoid -> {
+                finish();
+            });
+
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -153,7 +185,21 @@ public class ShareReceiveActivity extends BaseActivity implements CanBack {
      * 检查数据合法性
      */
     private boolean checkValidate() {
-        // TODO: 05/12/2016
-        return false;
+        if (et_host.length() == 0) {
+            Utils.toast("规则不能为空");
+            return false;
+        }
+
+        if (sp_file.getSelectedItem() == null) {
+            Utils.toast("文件不能为空");
+            return false;
+        }
+
+        if (sp_type.getSelectedItem() == null) {
+            Utils.toast("规则类型不能为空");
+            return false;
+        }
+
+        return true;
     }
 }

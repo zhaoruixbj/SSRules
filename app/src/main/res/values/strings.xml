@@ -10,4 +10,6 @@
     <string name="title_activity_main2">Main2Activity</string>
     <string name="rule_ip">编辑规则</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="add_to">添加到...</string>
+    <string name="choose_type">规则类型</string>
 </resources>

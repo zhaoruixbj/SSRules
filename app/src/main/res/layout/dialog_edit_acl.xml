@@ -21,6 +21,14 @@
         android:hint="@string/rule_content"
         app:met_floatingLabel="normal"/>
 
+    <TextView
+        android:text="@string/add_to"
+        android:textSize="12sp"
+        android:padding="6dp"
+        android:textColor="@color/text_light"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
     <android.support.v7.widget.AppCompatSpinner
         android:id="@+id/spinner"
         android:layout_width="match_parent"
