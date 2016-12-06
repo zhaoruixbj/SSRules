@@ -18,25 +18,26 @@
                 <category android:name="android.intent.category.LAUNCHER"/>
             </intent-filter>
         </activity>
-
         <activity
             android:name=".ui.AclListActivity"
             android:label="规则列表"/>
-
         <activity android:name=".ui.AclDetailActivity"/>
-
         <activity
             android:name=".ui.ShareReceiveActivity"
             android:label="添加 SS 规则"
             android:launchMode="singleInstance">
-
             <intent-filter>
                 <action android:name="android.intent.action.SEND"/>
+
                 <category android:name="android.intent.category.DEFAULT"/>
+
                 <data android:mimeType="text/plain"/>
             </intent-filter>
         </activity>
-
+        <activity
+            android:name=".ui.SettingsActivity"
+            android:label="@string/title_activity_settings">
+        </activity>
     </application>
 
 </manifest>

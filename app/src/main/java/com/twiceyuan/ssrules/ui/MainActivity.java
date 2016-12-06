@@ -8,6 +8,7 @@ import com.chrisplus.rootmanager.RootManager;
 import com.chrisplus.rootmanager.container.Result;
 import com.twiceyuan.autofinder.AutoFinder;
 import com.twiceyuan.ssrules.R;
+import com.twiceyuan.ssrules.constants.Path;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,14 +26,12 @@ public class MainActivity extends AppCompatActivity {
         boolean obtainPermission = rootManager.obtainPermission();
 
         if (obtainPermission) {
-            Result result = rootManager.runCommand("ls /data/data/com.github.shadowsocks/*.acl");
+            Result result = rootManager.runCommand("ls " + Path.SS_PATH + "/*.acl");
             String message = result.getMessage();
             if (message.contains("No such file or directory")) {
                 tv_check.setText(R.string.not_installed);
             } else {
                 AclListActivity.start(this);
-                //
-                // rootManager.runCommand("adb shell su root setenforce 0");
                 finish();
             }
         } else {

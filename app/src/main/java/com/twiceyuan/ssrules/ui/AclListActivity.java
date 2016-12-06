@@ -10,6 +10,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.twiceyuan.autofinder.AutoFinder;
 import com.twiceyuan.commonadapter.library.adapter.CommonAdapter;
@@ -27,6 +29,8 @@ import java.util.List;
  * Site: http://twiceyuan.com
  */
 public class AclListActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
+
+    private static final int MENU_PREFERENCES = 1;
 
     SwipeRefreshLayout refreshLayout;
     RecyclerView       rv_acls;
@@ -66,5 +70,25 @@ public class AclListActivity extends AppCompatActivity implements SwipeRefreshLa
         mAdapter.notifyDataSetChanged();
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> refreshLayout.setRefreshing(false), 500);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        menu.add(Menu.FIRST, MENU_PREFERENCES, 100, "偏好")
+                .setIcon(R.drawable.ic_settings_white_24dp)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM|MenuItem.SHOW_AS_ACTION_WITH_TEXT);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == MENU_PREFERENCES) {
+            // SettingsActivity.start(this);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

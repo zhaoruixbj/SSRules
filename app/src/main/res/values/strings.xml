@@ -6,4 +6,8 @@
     <string name="title_acl_detail">规则详情</string>
     <string name="rule_content">规则内容</string>
     <string name="rule_host">规则域名（如：google.com）</string>
+    <string name="preferences">偏好</string>
+    <string name="title_activity_main2">Main2Activity</string>
+    <string name="rule_ip">编辑规则</string>
+    <string name="title_activity_settings">Settings</string>
 </resources>

@@ -47,7 +47,7 @@ public class AclDetailActivity extends BaseActivity implements CanBack {
     FastScroller         scroller;
     FloatingActionButton fab;
 
-    AclFile file;
+    AclFile      file;
     List<String> typeList;
 
     SectionAdapter<String, AclLineHolder> mAdapter;
@@ -105,10 +105,7 @@ public class AclDetailActivity extends BaseActivity implements CanBack {
                 isChanged = true;
                 mAdapter.remove(aclItem.content);
                 mAdapter.notifyDataSetChanged();
-            }, () -> {
-                Utils.toast("没实现！");
-                // Dialogs.editAcl(aclItem);
-            });
+            }, () -> Utils.toast("没实现！"));
         });
 
         scroller.setRecyclerView(rv_detail);
@@ -120,6 +117,8 @@ public class AclDetailActivity extends BaseActivity implements CanBack {
 
             isChanged = true;
         }));
+
+        invalidateOptionsMenu();
     }
 
     public void loadFileContent() {
