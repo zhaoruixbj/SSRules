@@ -20,6 +20,7 @@ import com.twiceyuan.ssrules.widget.EditorDialogHolder;
 
 import java.util.List;
 
+import rx.Observable;
 import rx.functions.Action0;
 import rx.functions.Action2;
 
@@ -62,21 +63,12 @@ public class Dialogs {
      * 编辑 ACL 并且返回的值作用到适配器中（保存时由适配器生成）
      *
      * @param activity     activity
-     * @param item         需要编辑的 ACL item
      * @param editCallback 编辑完成的回调，第一个代表编辑完的对象，第二个代表编辑完之后的规则放在哪个规则下面
      *                     主要是方便新建模式时，决定该规则属于哪个属性下。
      */
-    public static void editAcl(Activity activity,
-                               AclItem item,
-                               List<String> typeList,
-                               Action2<AclItem, String> editCallback) {
+    public static void newAcl(Activity activity, List<String> typeList, Action2<AclItem, String> editCallback) {
 
-        if (item == null) {
-            // 新建模式
-            item = new AclItem("");
-        } else {
-            // 更新模式
-        }
+        AclItem item = new AclItem("");
 
         View rootView = View.inflate(activity, R.layout.dialog_edit_acl, null);
 
@@ -85,14 +77,19 @@ public class Dialogs {
 
         holder.et_host.setText(item.getHost());
         holder.et_rule.setText(item.content);
-        holder.spinner.setAdapter(new ArrayAdapter<>(activity, R.layout.support_simple_spinner_dropdown_item, typeList));
+
+        List<String> typeName = Observable.from(typeList)
+                .map(Filters.TYPE::get)
+                .toList().toBlocking().first();
+
+        holder.spinner.setAdapter(new ArrayAdapter<>(activity, R.layout.support_simple_spinner_dropdown_item, typeName));
 
         final String[] selectedType = {typeList.get(0)};
 
         holder.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
-                selectedType[0] = (String) adapterView.getSelectedItem();
+            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
+                selectedType[0] = typeList.get(position);
             }
 
             @Override

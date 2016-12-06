@@ -13,12 +13,6 @@ import java.util.Set;
 public class Preferences {
 
     private static SharedPreferences sDefaultPreference;
-    public enum Key {
-        /**
-         * 是否第一次启动 - boolean
-         */
-        FIRST_LAUNCH,
-    }
 
     public static void init(Context context) {
         sDefaultPreference = context.getSharedPreferences("default", Context.MODE_PRIVATE);
@@ -94,5 +88,22 @@ public class Preferences {
     public static String getSetting(Key key, String defaultValue) {
         SharedPreferences preferences = sDefaultPreference;
         return preferences.getString(String.valueOf(key.ordinal()), defaultValue);
+    }
+
+    public enum Key {
+        /**
+         * 是否第一次启动 - boolean
+         */
+        FIRST_LAUNCH,
+
+        /**
+         * 偏好文件
+         */
+        LAST_FILE,
+
+        /**
+         * 偏好类型
+         */
+        LAST_TYPE,
     }
 }

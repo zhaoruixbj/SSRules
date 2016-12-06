@@ -10,6 +10,8 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.view.Menu;
+import android.view.MenuItem;
 
 import com.twiceyuan.autofinder.AutoFinder;
 import com.twiceyuan.commonadapter.library.adapter.CommonAdapter;
@@ -25,11 +27,15 @@ import java.util.List;
  * Created by twiceYuan on 02/12/2016.
  * Email: i@twiceyuan.com
  * Site: http://twiceyuan.com
+ *
+ * ACL 规则列表页面
  */
 public class AclListActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
+    private static final int MENU_PREFERENCES = 1;
+
     SwipeRefreshLayout refreshLayout;
-    RecyclerView       rv_acls;
+    RecyclerView       rv_acl_list;
 
     private CommonAdapter<AclFile, AclFileHolder> mAdapter;
 
@@ -45,9 +51,9 @@ public class AclListActivity extends AppCompatActivity implements SwipeRefreshLa
 
         AutoFinder.find(this);
 
-        rv_acls.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        rv_acls.addItemDecoration(new VerticalItemDecoration(Utils.getPx(4)));
-        rv_acls.setAdapter(mAdapter = new CommonAdapter<>(this, AclFileHolder.class));
+        rv_acl_list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        rv_acl_list.addItemDecoration(new VerticalItemDecoration(Utils.getPx(4)));
+        rv_acl_list.setAdapter(mAdapter = new CommonAdapter<>(this, AclFileHolder.class));
 
         mAdapter.setOnItemClickListener((position, file) -> AclDetailActivity.start(AclListActivity.this, file));
 
@@ -66,5 +72,25 @@ public class AclListActivity extends AppCompatActivity implements SwipeRefreshLa
         mAdapter.notifyDataSetChanged();
 
         new Handler(Looper.getMainLooper()).postDelayed(() -> refreshLayout.setRefreshing(false), 500);
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        super.onCreateOptionsMenu(menu);
+
+        menu.add(Menu.FIRST, MENU_PREFERENCES, 100, "偏好")
+                .setIcon(R.drawable.ic_settings_white_24dp)
+                .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
+
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        if (item.getItemId() == MENU_PREFERENCES) {
+            // SettingsActivity.start(this);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
