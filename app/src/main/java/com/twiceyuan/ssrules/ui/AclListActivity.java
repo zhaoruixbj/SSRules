@@ -78,8 +78,8 @@ public class AclListActivity extends AppCompatActivity implements SwipeRefreshLa
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
 
-        menu.add(Menu.FIRST, MENU_PREFERENCES, 100, "偏好")
-                .setIcon(R.drawable.ic_settings_white_24dp)
+        menu.add(Menu.FIRST, MENU_PREFERENCES, 100, "关于或者帮助")
+                .setIcon(R.drawable.ic_help_white_24dp)
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_IF_ROOM);
 
         return true;
@@ -88,7 +88,7 @@ public class AclListActivity extends AppCompatActivity implements SwipeRefreshLa
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if (item.getItemId() == MENU_PREFERENCES) {
-            // SettingsActivity.start(this);
+            AboutActivity.start(this);
             return true;
         }
         return super.onOptionsItemSelected(item);
