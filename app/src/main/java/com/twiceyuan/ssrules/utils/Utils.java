@@ -33,13 +33,22 @@ import rx.functions.Func1;
  * Created by twiceYuan on 02/12/2016.
  * Email: i@twiceyuan.com
  * Site: http://twiceyuan.com
+ * <p>
+ * 通用工具类
  */
-
 public class Utils {
 
+    /**
+     * 文件日期格式
+     */
     @SuppressLint("SimpleDateFormat")
     public static SimpleDateFormat mDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 
+    /**
+     * 获得所有 ACL 规则文件
+     *
+     * @return 所有 ACL 规则文件
+     */
     public static List<AclFile> getAllAclFiles() {
         List<AclFile> aclFiles = new ArrayList<>();
 
@@ -65,6 +74,12 @@ public class Utils {
         return aclFiles;
     }
 
+    /**
+     * 解析时间
+     *
+     * @param source 时间字符串
+     * @return long
+     */
     private static long parseTime(String source) {
         try {
             return mDateFormat.parse(source).getTime();
@@ -73,6 +88,12 @@ public class Utils {
         }
     }
 
+    /**
+     * 匹配规则文件名称
+     *
+     * @param filePath 文件路径
+     * @return 文件的友好显示名称。没有匹配到就会返回 null，调用处手动处理了不予显示
+     */
     private static String matchFileName(String filePath) {
         for (String fileName : ACLs.fileNameMap.keySet()) {
             if (filePath.contains(fileName)) {
@@ -82,6 +103,12 @@ public class Utils {
         return null;
     }
 
+    /**
+     * 读取一个文件内容
+     *
+     * @param filePath 文件的路径
+     * @return 文件每一行拆分后存入一个 list，方便匹配
+     */
     public static Observable<List<String>> readFile(final String filePath) {
         return Observable.create(new Observable.OnSubscribe<List<String>>() {
             @Override
@@ -113,20 +140,40 @@ public class Utils {
         return types;
     }
 
+    /**
+     * dp 转换为 px
+     *
+     * @param dpValue dp
+     * @return px
+     */
     public static int getPx(float dpValue) {
         final float scale = App.get().getResources().getDisplayMetrics().density;
         return (int) (dpValue * scale + 0.5f);
     }
 
+    /**
+     * px 转换为 dp
+     *
+     * @param pxValue px
+     * @return dp
+     */
     public static int getDp(float pxValue) {
         final float scale = App.get().getResources().getDisplayMetrics().density;
         return (int) (pxValue / scale + 0.5f);
     }
 
+    /**
+     * Application Context Toast
+     *
+     * @param message 需要提示的消息
+     */
     public static void toast(String message) {
         Toast.makeText(App.get(), message, Toast.LENGTH_SHORT).show();
     }
 
+    /**
+     * 重启 Shadowsocks。通过杀掉进程导致自动重启实现，主要用于不关闭的情况下刷新 shadowsocks 配置
+     */
     public static void restartShadowsocks() {
         RootManager.getInstance().runCommand("kill -9 $(pidof ss-local)");
     }
@@ -156,6 +203,13 @@ public class Utils {
         });
     }
 
+    /**
+     * 保存到 acl 文件
+     *
+     * @param context  context
+     * @param data     数据
+     * @param filePath 文件路径
+     */
     public static void saveToFile(Context context, List<String> data, String filePath) {
 
         File tempFile = new File(context.getExternalCacheDir(), "tmp.acl");
@@ -181,6 +235,15 @@ public class Utils {
         Utils.restartShadowsocks();
     }
 
+    /**
+     * 为 spinner 选中默认值，如果默认值不在 spinner 中，则选中第一个（如果至少存在一个选项）
+     *
+     * @param spinner      下拉选择框
+     * @param defaultValue 默认值
+     * @param converter    spinner 中实体转换为默认值的函数
+     * @param <T>          spinner 实体类型
+     * @param <R>          转换后默认值的类型
+     */
     public static <T, R> void setDefaultOrFirst(Spinner spinner, R defaultValue, Func1<T, R> converter) {
         SpinnerAdapter adapter = spinner.getAdapter();
         int count = adapter.getCount();
