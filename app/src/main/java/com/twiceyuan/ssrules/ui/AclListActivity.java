@@ -16,9 +16,10 @@ import android.view.MenuItem;
 import com.twiceyuan.autofinder.AutoFinder;
 import com.twiceyuan.commonadapter.library.adapter.CommonAdapter;
 import com.twiceyuan.ssrules.R;
-import com.twiceyuan.ssrules.ui.adapters.AclFileHolder;
+import com.twiceyuan.ssrules.helper.AclHelper;
+import com.twiceyuan.ssrules.helper.ViewHelper;
 import com.twiceyuan.ssrules.model.AclFile;
-import com.twiceyuan.ssrules.utils.Utils;
+import com.twiceyuan.ssrules.ui.adapters.AclFileHolder;
 import com.twiceyuan.ssrules.widget.VerticalItemDecoration;
 
 import java.util.List;
@@ -52,7 +53,7 @@ public class AclListActivity extends AppCompatActivity implements SwipeRefreshLa
         AutoFinder.find(this);
 
         rv_acl_list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        rv_acl_list.addItemDecoration(new VerticalItemDecoration(Utils.getPx(4)));
+        rv_acl_list.addItemDecoration(new VerticalItemDecoration(ViewHelper.getPx(4)));
         rv_acl_list.setAdapter(mAdapter = new CommonAdapter<>(this, AclFileHolder.class));
 
         mAdapter.setOnItemClickListener((position, file) -> AclDetailActivity.start(AclListActivity.this, file));
@@ -65,7 +66,7 @@ public class AclListActivity extends AppCompatActivity implements SwipeRefreshLa
     @Override
     public void onRefresh() {
         refreshLayout.setRefreshing(true);
-        List<AclFile> files = Utils.getAllAclFiles();
+        List<AclFile> files = AclHelper.getAllAclFiles();
 
         mAdapter.clear();
         mAdapter.addAll(files);

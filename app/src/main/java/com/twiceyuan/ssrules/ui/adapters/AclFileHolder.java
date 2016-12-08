@@ -7,8 +7,8 @@ import com.twiceyuan.commonadapter.library.LayoutId;
 import com.twiceyuan.commonadapter.library.ViewId;
 import com.twiceyuan.commonadapter.library.holder.CommonHolder;
 import com.twiceyuan.ssrules.R;
+import com.twiceyuan.ssrules.constants.Formats;
 import com.twiceyuan.ssrules.model.AclFile;
-import com.twiceyuan.ssrules.utils.Utils;
 
 /**
  * Created by twiceYuan on 02/12/2016.
@@ -29,6 +29,6 @@ public class AclFileHolder extends CommonHolder<AclFile> {
         tv_path.setText(aclFile.filePath);
         tv_file_size.setText(fileSize);
         tv_name.setText(aclFile.fileName);
-        tv_last_update.setText(String.format("上次修改：%s", Utils.mDateFormat.format(aclFile.lastUpdate)));
+        tv_last_update.setText(String.format("上次修改：%s", Formats.dateFormat.format(aclFile.lastUpdate)));
     }
 }

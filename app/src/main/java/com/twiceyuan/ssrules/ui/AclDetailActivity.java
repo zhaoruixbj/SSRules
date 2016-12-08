@@ -13,13 +13,13 @@ import android.text.TextUtils;
 import com.futuremind.recyclerviewfastscroll.FastScroller;
 import com.twiceyuan.autofinder.AutoFinder;
 import com.twiceyuan.ssrules.R;
+import com.twiceyuan.ssrules.helper.AclHelper;
 import com.twiceyuan.ssrules.model.AclFile;
 import com.twiceyuan.ssrules.model.AclItem;
 import com.twiceyuan.ssrules.ui.adapters.AclLineHolder;
 import com.twiceyuan.ssrules.ui.adapters.SectionAdapter;
 import com.twiceyuan.ssrules.ui.common.Dialogs;
 import com.twiceyuan.ssrules.ui.constract.CanBack;
-import com.twiceyuan.ssrules.utils.Utils;
 
 import java.util.List;
 
@@ -30,6 +30,8 @@ import rx.schedulers.Schedulers;
  * Created by twiceYuan on 02/12/2016.
  * Email: i@twiceyuan.com
  * Site: http://twiceyuan.com
+ *
+ * 规则详情界面
  */
 public class AclDetailActivity extends BaseActivity implements CanBack {
 
@@ -93,31 +95,30 @@ public class AclDetailActivity extends BaseActivity implements CanBack {
             Dialogs.aclItemDialog(this, aclItem, () -> {
                 mAdapter.remove(aclItem.content);
                 mAdapter.notifyDataSetChanged();
-                Utils.saveToFile(this, mAdapter.getData(), file.filePath);
-            }, () -> Utils.toast("没实现！"));
+                AclHelper.saveToFile(this, mAdapter.getData(), file.filePath);
+            });
         });
 
         scroller.setRecyclerView(rv_detail);
 
-        fab.setOnClickListener(view -> Dialogs.newAcl(this, typeList, (item, type) -> {
+        fab.setOnClickListener(view -> Dialogs.newAcl(this, mAdapter.getData(), typeList, (item, type) -> {
             int position = mAdapter.getData().indexOf(type) + 1;
+            position = position < 0 ? 0 : position;
             mAdapter.getData().add(position, item.content);
             mAdapter.notifyDataSetChanged();
-            Utils.saveToFile(this, mAdapter.getData(), file.filePath);
+            AclHelper.saveToFile(this, mAdapter.getData(), file.filePath);
         }));
-
-        invalidateOptionsMenu();
     }
 
     public void loadFileContent() {
-        Utils.readFile(file.filePath)
+        AclHelper.readFile(file.filePath)
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(aclItems -> {
                     mAdapter.clear();
                     mAdapter.addAll(aclItems);
                     mAdapter.notifyDataSetChanged();
-                    typeList = Utils.getTypes(aclItems);
+                    typeList = AclHelper.getTypes(aclItems);
                 });
     }
 }

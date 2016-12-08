@@ -1,21 +1,19 @@
 package com.twiceyuan.ssrules.ui.common;
 
 import android.app.Activity;
-import android.content.ClipData;
-import android.content.ClipboardManager;
 import android.content.DialogInterface;
 import android.net.Uri;
 import android.support.v7.app.AlertDialog;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.View;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 
 import com.twiceyuan.autofinder.AutoFinder;
 import com.twiceyuan.ssrules.R;
 import com.twiceyuan.ssrules.constants.Filters;
+import com.twiceyuan.ssrules.constants.Formats;
+import com.twiceyuan.ssrules.helper.ViewHelper;
 import com.twiceyuan.ssrules.model.AclItem;
+import com.twiceyuan.ssrules.utils.Utils;
 import com.twiceyuan.ssrules.widget.EditorDialogHolder;
 
 import java.util.List;
@@ -23,8 +21,6 @@ import java.util.List;
 import rx.Observable;
 import rx.functions.Action0;
 import rx.functions.Action2;
-
-import static android.content.Context.CLIPBOARD_SERVICE;
 
 /**
  * Created by twiceYuan on 04/12/2016.
@@ -34,7 +30,7 @@ import static android.content.Context.CLIPBOARD_SERVICE;
 
 public class Dialogs {
 
-    public static void aclItemDialog(Activity activity, AclItem item, Action0 deleteCallback, Action0 editCallback) {
+    public static void aclItemDialog(Activity activity, AclItem item, Action0 deleteCallback) {
         AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setMessage(String.format("" +
                                 "内容: %s\n" +
@@ -45,18 +41,9 @@ public class Dialogs {
                         item.getTypeName(),
                         item.getHost()))
                 .setPositiveButton("删除该规则", (dialogInterface, i) -> deleteCallback.call())
-                .setNeutralButton("编辑", (dialogInterface, i) -> editCallback.call())
                 .setNegativeButton("取消", null)
                 .create();
         dialog.show();
-    }
-
-    public static void alertSave(Activity activity, Action0 saveCallback, Action0 discardCallback) {
-        new AlertDialog.Builder(activity)
-                .setMessage("当前未保存，是否保存后退出？")
-                .setPositiveButton("保存", (dialogInterface, i) -> saveCallback.call())
-                .setNegativeButton("舍弃", (dialogInterface, i) -> discardCallback.call())
-                .create().show();
     }
 
     /**
@@ -66,7 +53,7 @@ public class Dialogs {
      * @param editCallback 编辑完成的回调，第一个代表编辑完的对象，第二个代表编辑完之后的规则放在哪个规则下面
      *                     主要是方便新建模式时，决定该规则属于哪个属性下。
      */
-    public static void newAcl(Activity activity, List<String> typeList, Action2<AclItem, String> editCallback) {
+    public static void newAcl(Activity activity, List<String> ruleList, List<String> typeList, Action2<AclItem, String> editCallback) {
 
         AclItem item = new AclItem("");
 
@@ -78,53 +65,35 @@ public class Dialogs {
         holder.et_host.setText(item.getHost());
         holder.et_rule.setText(item.content);
 
-        List<String> typeName = Observable.from(typeList)
-                .map(Filters.TYPE::get)
-                .toList().toBlocking().first();
+        final String[] selectedType = {""};
 
-        holder.spinner.setAdapter(new ArrayAdapter<>(activity, R.layout.support_simple_spinner_dropdown_item, typeName));
+        if (typeList != null && typeList.size() != 0) {
+            selectedType[0] = typeList.get(0);
+            List<String> typeName = Observable.from(typeList)
+                    .map(Filters.TYPE::get)
+                    .toList().toBlocking().first();
 
-        final String[] selectedType = {typeList.get(0)};
+            holder.spinner.setAdapter(new ArrayAdapter<>(activity,
+                    R.layout.support_simple_spinner_dropdown_item,
+                    typeName));
+            ViewHelper.spinnerSelect(holder.spinner, position -> selectedType[0] = typeList.get(position));
+        } else {
+            holder.spinner.setVisibility(View.GONE);
+        }
 
-        holder.spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> adapterView, View view, int position, long l) {
-                selectedType[0] = typeList.get(position);
+        ViewHelper.watchText(holder.et_host, s -> {
+            if (!Formats.isURL(s)) {
+                return;
             }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> adapterView) {
-            }
-        });
-
-        holder.et_host.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-                if (editable.length() == 0) {
-                    return;
-                }
-
-                String text = "(.*\\.)?" + editable.toString().replaceAll("\\.", "\\\\.");
-                holder.et_rule.setText(text);
-            }
+            String text = "(.*\\.)?" + s.replaceAll("\\.", "\\\\.");
+            holder.et_rule.setText(text);
         });
 
         final AclItem selectedItem = item;
 
         AlertDialog dialog = new AlertDialog.Builder(activity)
                 .setView(rootView)
-                .setPositiveButton("确定", (d, i) -> {
-                    selectedItem.content = holder.et_rule.getText().toString();
-                    editCallback.call(selectedItem, selectedType[0]);
-                })
+                .setPositiveButton("确定", null)
                 .setNeutralButton("从粘贴板识别", null)
                 .setNegativeButton("取消", null)
                 .setCancelable(false)
@@ -134,11 +103,36 @@ public class Dialogs {
 
         dialog.getButton(DialogInterface.BUTTON_NEUTRAL).setOnClickListener(view -> {
             // 获取 剪切板数据
-            ClipboardManager cm = (ClipboardManager) activity.getSystemService(CLIPBOARD_SERVICE);
-            ClipData cd = cm.getPrimaryClip();
-            String clipString = cd.getItemAt(0).getText().toString();
-            if (Filters.URL.matcher(clipString).matches()) {
+            String clipString = Utils.readClipBoard();
+            if (Formats.isURL(clipString)) {
                 holder.et_host.setText(Uri.parse(clipString).getHost());
+            } else {
+                Utils.toast("剪切板里好像不是 URL 哦？");
+            }
+        });
+
+        dialog.getButton(DialogInterface.BUTTON_POSITIVE).setOnClickListener(view -> {
+            String host = holder.et_host.getText().toString();
+
+            if (!host.startsWith("http://") && !host.startsWith("https://")) {
+                host = "http://" + host;
+            }
+
+            if (!Formats.isURL(host) || holder.et_rule.length() == 0) {
+                Utils.toast("请输入正确的域名，例如 google.com");
+                return;
+            }
+
+            if (ruleList.contains(holder.et_rule.getText().toString())) {
+                Utils.toast("该规则已存在");
+                return;
+            }
+
+            selectedItem.content = holder.et_rule.getText().toString();
+            editCallback.call(selectedItem, selectedType[0]);
+
+            if (dialog.isShowing()) {
+                dialog.dismiss();
             }
         });
     }

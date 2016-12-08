@@ -44,6 +44,9 @@ public class AboutActivity extends BaseActivity implements CanBack {
                 "可通过清除 Shadowsocks 的应用数据恢复\n" +
                 "\n" +
                 "项目地址\n" +
-                "https://github.com/twiceyuan/SSRules");
+                "https://github.com/twiceyuan/SSRules\n" +
+                "\n" +
+                "使用说明\n" +
+                "https://gist.github.com/twiceyuan/06c5535378bea2ec817df0605d84de93");
     }
 }
