@@ -1,4 +1,6 @@
-# SSRules
+# SSRules【弃用】
+
+已弃用：Shadowsocks-Android 已经添加了规则编辑功能，建议使用官方版来编辑。
 
 一个简单粗暴的 Shadowsocks 规则编辑器。需要 Root
 
